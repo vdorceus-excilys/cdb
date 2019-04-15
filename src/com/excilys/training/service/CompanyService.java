@@ -1,4 +1,4 @@
-package com.excilys.trainings.service;
+package com.excilys.training.service;
 
 import com.excilys.training.model.Computer;
 import java.text.SimpleDateFormat;

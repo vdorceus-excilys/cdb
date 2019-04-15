@@ -1,4 +1,4 @@
-package com.excilys.trainings.service;
+package com.excilys.training.service;
 
 
 
