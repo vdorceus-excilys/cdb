@@ -2,7 +2,7 @@ package com.excilys.training.model;
 
 import java.util.Date;
 
-public class Computer {
+public class Computer implements Comparable<Computer> {
 	Long id;
 	String name;
 	Date introduced;
@@ -37,6 +37,13 @@ public class Computer {
 	}
 	public void setCompany(Company company) {
 		this.company = company;
+	}	
+	
+	@Override
+	public int compareTo(Computer c) {
+		
+			
+		return this.getId().compareTo(c.getId());
 	}
 	
 	

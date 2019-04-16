@@ -1,46 +1,58 @@
 package com.excilys.training.service;
 
-import com.excilys.training.model.Computer;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-import java.util.Date;
+
+import java.util.Set;
+
+import com.excilys.training.model.Company;
+import com.excilys.training.persistance.CompanyPersistor;
+import com.excilys.training.persistance.db.Database;
+import com.excilys.training.persistance.db.Mysql;
+import com.excilys.training.util.ConfigurationProperties;
+import com.excilys.training.util.log.SimpleLogEntry;
 
 
-public class CompanyService {
+public class CompanyService extends GenericService<Company>{
 	
-	private static CompanyService self=null;
-	private static SimpleDateFormat sdf;
-	private static Date MINIMUM_DATE_LIMIT; //could be final but who cares
-	private static Date MAXIMUM_DATE_LIMIT; // could be final but who cares again !
-
+	static private CompanyService self=null;
+	
 	private CompanyService() {
-		sdf = new SimpleDateFormat("dd-MM-yyyy");
+		super();
 		try {
-			MINIMUM_DATE_LIMIT= sdf.parse("01-01-1970");
-		}catch(ParseException parseException) {
-			//log the bloody exception Valjery...
+			ConfigurationProperties config = new ConfigurationProperties();
+		config.load(ConfigurationProperties.DEFAULT_PERSISTANCE_PATH);		
+		Database db = new Mysql(config);
+		this.persistor = new CompanyPersistor(db);
 		}
-		MAXIMUM_DATE_LIMIT = new Date(); //it will be initialized with today Date
+		catch(Exception exp) {
+			//log service exception
+			SimpleLogEntry  s = new SimpleLogEntry(exp,"ERROR WHILE TRYING TO SET COMPANY CONFIGURATION WITH PROPERTIES");
+			log.log(s);
+		}
 	}
-		
 	
 	public static CompanyService getInstance() {
-		return (self!=null) ? self  : (self=new CompanyService());
+		return (self!=null)? self : (self=new CompanyService());
 	}
 	
-	private Boolean validate(Computer computer) {
-		Boolean valid = (computer!=null)
-				&& (computer.getId()>0)
-				&& (computer.getName().length()>2)
-				&& (computer.getIntroduced()==null || (
-						computer.getIntroduced().compareTo(MINIMUM_DATE_LIMIT)<0 &&
-						computer.getIntroduced().compareTo(MAXIMUM_DATE_LIMIT)>0)
-					)
-				&& (computer.getDiscontinued()==null || computer.getIntroduced()!=null &&(
-						computer.getDiscontinued().compareTo(computer.getIntroduced())<0 &&
-						computer.getDiscontinued().compareTo(MAXIMUM_DATE_LIMIT)>0)
-					)
-				;		
-		return valid;
+	@Override
+	public Company findByAttribut(String att, String value){
+		Company company =  null;
+		if(att.equals("NAME")) {
+			try {
+				Set<Company> companyList =  this.persistor.findAllQuery();
+				for(Company  c : companyList) {
+					if(c.getName().equals(value))
+						company =c;
+				}
+			} catch (Exception exp) {
+				// TODO Auto-generated catch block
+				SimpleLogEntry  s = new SimpleLogEntry(exp,"FAILED TO  FIND MODEL BY ATTRIBUTE NAME");
+				log.log(s);
+			}
+			
+		}
+		return company;
 	}
+	
+	
 }
