@@ -1,46 +1,49 @@
 package com.excilys.training.service;
 
-import com.excilys.training.model.Computer;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-import java.util.Date;
+import java.util.TreeSet;
+
+import com.excilys.training.model.Company;
+import com.excilys.training.model.validator.Validator;
 
 
-public class CompanyService {
+public class CompanyService implements Service<Company> {
 	
 	private static CompanyService self=null;
-	private static SimpleDateFormat sdf;
-	private static Date MINIMUM_DATE_LIMIT; //could be final but who cares
-	private static Date MAXIMUM_DATE_LIMIT; // could be final but who cares again !
-
+	private Validator<Company> companyValidator;
+	
 	private CompanyService() {
-		sdf = new SimpleDateFormat("dd-MM-yyyy");
-		try {
-			MINIMUM_DATE_LIMIT= sdf.parse("01-01-1970");
-		}catch(ParseException parseException) {
-			//log the bloody exception Valjery...
-		}
-		MAXIMUM_DATE_LIMIT = new Date(); //it will be initialized with today Date
-	}
-		
+	}		
 	
 	public static CompanyService getInstance() {
 		return (self!=null) ? self  : (self=new CompanyService());
 	}
 	
-	private Boolean validate(Computer computer) {
-		Boolean valid = (computer!=null)
-				&& (computer.getId()>0)
-				&& (computer.getName().length()>2)
-				&& (computer.getIntroduced()==null || (
-						computer.getIntroduced().compareTo(MINIMUM_DATE_LIMIT)<0 &&
-						computer.getIntroduced().compareTo(MAXIMUM_DATE_LIMIT)>0)
-					)
-				&& (computer.getDiscontinued()==null || computer.getIntroduced()!=null &&(
-						computer.getDiscontinued().compareTo(computer.getIntroduced())<0 &&
-						computer.getDiscontinued().compareTo(MAXIMUM_DATE_LIMIT)>0)
-					)
-				;		
-		return valid;
+	@Override
+	public void setValidator(Validator<Company> companyValidator) {
+		this.companyValidator = companyValidator;
 	}
+	@Override
+	public Boolean validate (Company company) {
+		return this.companyValidator.validate(company);
+	}
+	@Override
+	public TreeSet<Company> listAll(){return null;}
+	@Override
+	public Company findOne(Long id) {return  null;}
+	@Override 
+	public Boolean create(Company company) {return true;}
+	@Override 
+	public Boolean update(Company company) {return true;}
+	@Override
+	public Boolean delete(Company company) {return true;}
+	@Override 
+	public Company findByAttribut(String att, String value) {
+		if(att!="NAME")
+			return null;
+		//find it 
+		return null;
+	}
+	
+	
+	
 }
