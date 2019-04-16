@@ -1,12 +1,22 @@
 package com.excilys.training.ui;
 
+import java.util.Set;
+
 import com.excilys.training.mapper.dto.DataTransferObject;
 import com.excilys.training.model.Company;
 
 public class CompanyView implements View<Company> {
 	
+	
+	
+	
 	@Override
 	public void menu() {
+		
+	}
+	
+	@Override
+	public void list(Set<DataTransferObject<Company>> cs) {
 		
 	}
 

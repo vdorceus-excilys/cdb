@@ -4,7 +4,8 @@ import java.io.IOException;
 
 public interface View<T>{
 	public void menu() throws IOException;
-	public void show(DataTransferObject<T> dto);
+	public void show();
+	public void list();
 	public DataTransferObject<T> create();
 	public DataTransferObject<T> update();
 	public String delete();
