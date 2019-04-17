@@ -1,4 +1,5 @@
 package com.excilys.training.ui;
+
 import static java.lang.System.in;
 import static java.lang.System.out;
 
@@ -19,8 +20,16 @@ public class Launcher {
 		computerView = new ComputerView();
 	}
 
-	public static void main(String[] args) throws IOException{
-		// TODO Auto-generated method stub
+	public static void main(String[] args) throws IOException, Exception{				
+		Launcher.menu();
+	}
+	
+	public static String read() throws IOException{
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+		return reader.readLine();
+	}
+	public static void menu() throws Exception{
+
 		out.println("Bienvenue sur le gestionnaire de parc informatique");
 		StringBuffer q = new StringBuffer();
 		q.append("Tapez  [O] pour entrer dans le contexte Ordinateur\n");
@@ -45,14 +54,9 @@ public class Launcher {
 				input=read();
 			}
 		}
-			
-
 	}
 	
-	public static String read() throws IOException{
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-		return reader.readLine();
-	}
+	
 	
 	
 

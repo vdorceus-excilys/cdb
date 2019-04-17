@@ -1,14 +1,16 @@
 package com.excilys.training.persistance;
-import com.excilys.training.persistance.db.Database;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Set;
 
 public interface Persistor<T> {
 	
-	Set<T> listAllQuery();
+	Set<T> findAllQuery() throws Exception;
 	void createQuery(T model) throws Exception;
-	void deleteQuery(Long id) throws Exception;
+	void deleteQuery(T model) throws Exception;
 	void updateQuery(T model) throws Exception;
 	T findOneQuery(Long id) throws Exception;
-	void setDatabase(Database database);
+	T convertResultLine(ResultSet s) throws SQLException;
+	void setLazyStrategy(Boolean b);
 
 }

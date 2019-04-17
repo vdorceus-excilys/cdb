@@ -1,6 +1,6 @@
 package com.excilys.training.model;
 
-public class Company {
+public class Company implements Comparable<Company> {
 	Long id;
 	String name;
 	public Long getId() {
@@ -16,4 +16,8 @@ public class Company {
 		this.name = name;
 	}
 	
+	@Override
+	public int compareTo(Company c) {
+		return this.getId().compareTo(c.getId());
+	}
 }

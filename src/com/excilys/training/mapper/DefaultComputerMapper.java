@@ -3,13 +3,14 @@ package com.excilys.training.mapper;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import com.excilys.training.mapper.dto.DataTransferObject;
 import com.excilys.training.mapper.dto.DefaultComputerSkin;
 import com.excilys.training.model.Company;
 import com.excilys.training.model.Computer;
 import com.excilys.training.service.CompanyService;
 import com.excilys.training.service.Service;
 
-public class DefaultComputerMapper implements Mapper<Computer,DefaultComputerSkin> {
+public class DefaultComputerMapper implements Mapper<Computer,DataTransferObject<Computer>> {
 	
 	private SimpleDateFormat sdf;
 	private Service<Company> companyService;
@@ -20,8 +21,9 @@ public class DefaultComputerMapper implements Mapper<Computer,DefaultComputerSki
 	}
 
 	@Override
-	public Computer forward(DefaultComputerSkin pojo) {
+	public Computer forward(DataTransferObject<Computer> po) {
 		// TODO Auto-generated method stub
+		DefaultComputerSkin pojo = (DefaultComputerSkin) po;
 		Computer computer = new Computer();
 		computer.setId(Long.parseLong(pojo.getId()));
 		computer.setName(pojo.getName());	
@@ -36,13 +38,15 @@ public class DefaultComputerMapper implements Mapper<Computer,DefaultComputerSki
 	}
 
 	@Override
-	public DefaultComputerSkin reverse(Computer pojo) {
+	public DataTransferObject<Computer> reverse(Computer pojo) {
 		// TODO Auto-generated method stub
 		DefaultComputerSkin skin =  new DefaultComputerSkin();
 		skin.setId(pojo.getId().toString());
 		skin.setName(pojo.getName());
-		skin.setIntroduced(sdf.format(pojo.getIntroduced()));
-		skin.setDiscontinued(sdf.format(pojo.getDiscontinued()));
+		
+		skin.setIntroduced( (pojo.getIntroduced()!=null) ? sdf.format(pojo.getIntroduced()) : null );		
+		skin.setDiscontinued( (pojo.getDiscontinued()!=null) ? sdf.format(pojo.getDiscontinued()) : null  );
+		
 		skin.setCompany(pojo.getCompany().getName());
 		return skin;
 	}

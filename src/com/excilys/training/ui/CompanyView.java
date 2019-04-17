@@ -1,14 +1,17 @@
 package com.excilys.training.ui;
 
-import java.util.Set;
-
+import com.excilys.training.controller.CompanyController;
+import com.excilys.training.controller.Controller;
+import com.excilys.training.mapper.DefaultCompanyMapper;
 import com.excilys.training.mapper.dto.DataTransferObject;
 import com.excilys.training.model.Company;
 
 public class CompanyView implements View<Company> {
+	private final Controller<Company> companyController;
 	
-	
-	
+	public CompanyView() {
+		companyController = new CompanyController(new DefaultCompanyMapper());
+	}
 	
 	@Override
 	public void menu() {
@@ -16,15 +19,15 @@ public class CompanyView implements View<Company> {
 	}
 	
 	@Override
-	public void list(Set<DataTransferObject<Company>> cs) {
+	public void show() {
+		
+	}
+	
+	@Override
+	public void list() {
 		
 	}
 
-	@Override
-	public void show(DataTransferObject<Company> dto) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public DataTransferObject<Company> create() {
