@@ -41,6 +41,8 @@ public class Computer implements Comparable<Computer> {
 	
 	@Override
 	public int compareTo(Computer c) {
+		
+			
 		return this.getId().compareTo(c.getId());
 	}
 	

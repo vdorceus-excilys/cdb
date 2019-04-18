@@ -18,6 +18,7 @@ public class Company implements Comparable<Company> {
 	
 	@Override
 	public int compareTo(Company c) {
+		
 		return this.getId().compareTo(c.getId());
 	}
 }

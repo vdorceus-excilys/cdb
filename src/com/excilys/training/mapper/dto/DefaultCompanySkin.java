@@ -25,6 +25,7 @@ public class DefaultCompanySkin implements DataTransferObject<Company> {
 	public int compareTo(DataTransferObject<Company> o) {
 		// TODO Auto-generated method stub
 		DefaultCompanySkin sk = (DefaultCompanySkin) o;
+		
 		Long self=Long.parseLong(this.getId()),  other=Long.parseLong(sk.getId());
 		return self.compareTo(other);
 	}

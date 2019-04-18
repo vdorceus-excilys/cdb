@@ -9,13 +9,14 @@ import com.excilys.training.mapper.DefaultComputerMapper;
 import com.excilys.training.mapper.dto.DataTransferObject;
 import com.excilys.training.mapper.dto.DefaultComputerSkin;
 import com.excilys.training.model.Computer;
+import com.excilys.training.model.validator.ComputerDefaultValidator;
 
 public class ComputerView implements View<Computer>{
 	
-	private final Controller<Computer> computerController;
+	private final Controller<Computer> controller;
 	
 	public ComputerView() {
-		computerController = new ComputerController(new DefaultComputerMapper());
+		controller = new ComputerController(new DefaultComputerMapper(), new ComputerDefaultValidator());
 	}
 	
 	@Override 
@@ -45,15 +46,29 @@ public class ComputerView implements View<Computer>{
 			System.out.println(q);
 			command = Launcher.read();
 		}
+		System.out.println("Vous avez quittez le contexte ordinateur \n");
 	}
 	
 	@Override
 	public void list() {
 		System.out.println("Voici la liste des Ordinateurs");
-		Set<DataTransferObject<Computer>> cs = computerController.list();
-		for(DataTransferObject<Computer> comp : cs) {
-			DefaultComputerSkin computer = (DefaultComputerSkin) comp;
-			System.out.println("<"+computer.getId()+"> "+computer.getName()+", par : "+computer.getCompany() +" ["+computer.getIntroduced()+"//"+computer.getDiscontinued()+"]"  );
+		Long count = controller.count();
+		int nbrePage  = Launcher.howManyPages(count);
+		for(Long i=0L; i<nbrePage; i++) {
+			System.out.println("Page "+(i+1)+" sur "+nbrePage);
+			Long offset =  i*Launcher.pagination;
+			Long limit = 1L * Launcher.pagination;
+			Set<DataTransferObject<Computer>> cs = controller.list(offset,limit);
+			for(DataTransferObject<Computer> comp : cs) {
+				DefaultComputerSkin computer = (DefaultComputerSkin) comp;
+				System.out.println("<"+computer.getId()+"> "+computer.getName()+", par : "+computer.getCompany() +" ["+computer.getIntroduced()+"//"+computer.getDiscontinued()+"]"  );
+			}
+			
+			try{
+				Launcher.read();
+			}catch(Exception exp) {
+				
+			}
 		}
 		System.out.println("====================================");
 	}
@@ -64,7 +79,7 @@ public class ComputerView implements View<Computer>{
 		System.out.println("Saisissez un identifiant d'Ordinateur");
 		try {
 			String id = Launcher.read();
-			DefaultComputerSkin computer = (DefaultComputerSkin) computerController.show(id);
+			DefaultComputerSkin computer = (DefaultComputerSkin) controller.show(id);
 			System.out.println("<"+computer.getId()+"> "+computer.getName()+", par : "+computer.getCompany() +" ["+computer.getIntroduced()+"//"+computer.getDiscontinued()+"]"  );
 		}catch(Exception exp) {
 			System.err.println("Une erreur s'est produite");
@@ -74,39 +89,69 @@ public class ComputerView implements View<Computer>{
 	}
 
 	@Override
-	public DataTransferObject<Computer> create() {
+	public void create() {
 		// TODO Auto-generated method stub
-		System.out.println("creating one");
-		return null;
+		System.out.println("CONTEXTE: ENREGISTRER UN NOUVEL ORDINATEUR");
+		System.out.println("Saisissez en une ligne les informations suivantes séparées par une virgule:");
+		System.out.println("ID, NAME, DATE-INTRO, DATE-RETRAIT, COMPANY-NAME");
+		System.out.println("FORMAT DE DATE ACCEPTÉ : JJ-MM-AAAA");
+		try {
+			String computerString = Launcher.read();
+			String[] computerParams = computerString.split(",");
+			DefaultComputerSkin computer = new DefaultComputerSkin();
+			computer.setId(computerParams[0]);
+			computer.setName(computerParams[1]);
+			computer.setIntroduced(computerParams[2]);
+			computer.setDiscontinued(computerParams[3]);
+			computer.setCompany(computerParams[4]);
+			controller.create(computer);
+		}catch(Exception exp) {
+			System.err.println("Une erreur s'est produite");
+		}		
+		System.out.println("=======================================");		
 	}
 
 	@Override
-	public DataTransferObject<Computer> update() {
+	public void update() {
 		// TODO Auto-generated method stub
-		System.out.println("updating");
-		return null;
+		System.out.println("CONTEXTE: MODIFIER UN ORDINATEUR EXISTANT");
+		System.out.println("Saisissez en une ligne les informations suivantes séparées par une virgule:");
+		System.out.println("ID, NAME, DATE-INTRO, DATE-RETRAIT, COMPANY-NAME");
+		System.out.println("L'ID DOIT ÊTRE EXISTANT");
+		System.out.println("FORMAT DE DATE ACCEPTÉ : JJ-MM-AAAA");
+		try {
+			String computerString = Launcher.read();
+			String[] computerParams = computerString.split(",");
+			DefaultComputerSkin computer = new DefaultComputerSkin();
+			computer.setId(computerParams[0]);
+			computer.setName(computerParams[1]);
+			computer.setIntroduced(computerParams[2]);
+			computer.setDiscontinued(computerParams[3]);
+			computer.setCompany(computerParams[4]);
+			controller.update(computer);
+		}catch(Exception exp) {
+			System.err.println("Une erreur s'est produite");
+		}		
+		System.out.println("=======================================");	
+		
 	}
 
 	@Override
-	public String delete() {
+	public void delete() {
 		// TODO Auto-generated method stub
-		System.out.println("deleting...");
-		return null;
+		System.out.println("CONTEXTE: SUPPRIMER UN ORDINATEUR");
+		System.out.println("Saisissez L'IDENTIFIANT");
+		System.out.println("L'ID DOIT DÉJÀ EXISTER");
+		try {
+			String computerString = Launcher.read();
+			DefaultComputerSkin computer = new DefaultComputerSkin();
+			computer.setId(computerString);
+			controller.delete(computer);
+		}catch(Exception exp) {
+			System.err.println("Une erreur s'est produite");
+		}		
+		System.out.println("=======================================");			
 	}
 
-	@Override
-	public String findOne() {
-		// TODO Auto-generated method stub
-		System.out.println("finding one");
-		return null;
-	}
-
-	@Override
-	public String findByAttribut() {
-		// TODO Auto-generated method stub
-		System.out.println("finding by attribut");
-		return null;
-	}
-	
 
 }

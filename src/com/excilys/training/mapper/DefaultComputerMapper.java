@@ -28,12 +28,14 @@ public class DefaultComputerMapper implements Mapper<Computer,DataTransferObject
 		computer.setId(Long.parseLong(pojo.getId()));
 		computer.setName(pojo.getName());	
 		try {
-			computer.setIntroduced(sdf.parse(pojo.getIntroduced()));
-			computer.setDiscontinued(sdf.parse(pojo.getDiscontinued()));
+			String a=pojo.getIntroduced().trim(),b =pojo.getDiscontinued().trim();
+			computer.setIntroduced((a==null || a.isEmpty())? null : sdf.parse(a));
+			computer.setDiscontinued((b==null ||a.isEmpty())? null : sdf.parse(b));
 		}catch(ParseException exp) {
 			System.err.println(exp.getMessage());
 		}
-		computer.setCompany(companyService.findByAttribut("NAME",pojo.getCompany()));		
+		computer.setCompany(companyService.findByAttribut("NAME",pojo.getCompany()));
+		System.out.println("printing id of company linked with new computer"+computer.getCompany().getId());
 		return computer;
 	}
 

@@ -47,6 +47,7 @@ public class DefaultComputerSkin implements DataTransferObject<Computer>{
 	@Override
 	public int compareTo(DataTransferObject<Computer> o) {
 		DefaultComputerSkin sk = (DefaultComputerSkin) o;
+		
 		Long self=Long.parseLong(this.getId()),  other=Long.parseLong(sk.getId());
 		return self.compareTo(other);
 	}

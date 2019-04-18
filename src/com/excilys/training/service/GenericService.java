@@ -2,12 +2,16 @@ package com.excilys.training.service;
 
 import java.util.Set;
 
+import com.excilys.training.model.validator.FailedValidationException;
 import com.excilys.training.model.validator.Validator;
 import com.excilys.training.persistance.Persistor;
+import com.excilys.training.util.log.SimpleLog;
+import com.excilys.training.util.log.SimpleLogEntry;
 
 public abstract class GenericService<T> implements Service<T> {
 	protected Validator<T> validator;
 	protected Persistor<T> persistor;
+	protected SimpleLog log = SimpleLog.getInstance();
 	
 	// Singleton Pattern to be implemented in child classes	
 	
@@ -16,8 +20,8 @@ public abstract class GenericService<T> implements Service<T> {
 		this.validator = validator;
 	}
 	@Override
-	public Boolean validate (T model) {
-		return this.validator.validate(model);
+	public void validate (T model) throws FailedValidationException{
+		this.validator.validate(model);
 	}
 	@Override
 	public Set<T> listAll(){
@@ -26,6 +30,20 @@ public abstract class GenericService<T> implements Service<T> {
 			models = persistor.findAllQuery();
 		}catch(Exception exp) {
 			//log exception
+			SimpleLogEntry  s = new SimpleLogEntry(exp,"ERROR WHILE TRYING TO FETCH(findAllQuery) FROM PERSISTOR");
+			log.log(s);
+		}
+		return models;
+	}
+	@Override
+	public Set<T> listAll(Long offset, Long limit){
+		Set<T> models =null;
+		try {
+			models = persistor.findAllQuery(offset, limit);
+		}catch(Exception exp) {
+			//log exception
+			SimpleLogEntry  s = new SimpleLogEntry(exp,"ERROR WHILE TRYING TO FETCH(findAllQuery) FROM PERSISTOR");
+			log.log(s);
 		}
 		return models;
 	}
@@ -36,6 +54,8 @@ public abstract class GenericService<T> implements Service<T> {
 			model = persistor.findOneQuery(id);
 		}catch(Exception  exp) {
 			//log exception
+			SimpleLogEntry  s = new SimpleLogEntry(exp,"ERROR WHILE TRYING TO FETCH(findOneQuery) FROM PERSISTOR");
+			log.log(s);
 		}
 		return model;
 	}
@@ -46,6 +66,8 @@ public abstract class GenericService<T> implements Service<T> {
 			persistor.createQuery(model);
 		}
 		catch(Exception exp) {
+			SimpleLogEntry  s = new SimpleLogEntry(exp,"ERROR WHILE TRYING TO CREATE A NEW ENTITY WITH PERSISTOR");
+			log.log(s);
 			state=false;
 		}
 		return state;		
@@ -57,6 +79,8 @@ public abstract class GenericService<T> implements Service<T> {
 			persistor.updateQuery(model);
 		}catch(Exception exp) {
 			//log exception
+			SimpleLogEntry  s = new SimpleLogEntry(exp,"ERROR WHILE TRYING TO UPDATE EXISTING ENTITY WITH PERSISTOR");
+			log.log(s);
 			state = false;
 		}
 		return state;		
@@ -68,16 +92,20 @@ public abstract class GenericService<T> implements Service<T> {
 			persistor.deleteQuery(model);
 		}catch(Exception exp) {
 			//log exception
+			SimpleLogEntry  s = new SimpleLogEntry(exp,"ERROR WHILE TRYING TO DELETE EXISTING ENTITY PERSISTOR");
+			log.log(s);
 			state = false;
 		}
 		return state;
 	}
 	
 	@Override 
-	public T findByAttribut(String att, String value) {
-		if(att!="NAME")
-			return null;
-		//find it 
-		return null;
+	abstract public T findByAttribut(String att, String value); 
+	
+	@Override 
+	public Long count() {
+		Long count ;
+		count = persistor.countAll();		
+		return count;		
 	}
 }

@@ -10,6 +10,7 @@ public interface Controller<T> {
 	public void update(DataTransferObject<T> skin);
 	public void create(DataTransferObject<T> skin);
 	public Set<DataTransferObject<T>> list();
-	
+	public Set<DataTransferObject<T>> list(Long offset, Long limit);
+	public Long count();
 
 }

@@ -22,7 +22,7 @@ public class DefaultCompanyMapper implements Mapper<Company,DataTransferObject<C
 		DefaultCompanySkin skin = new DefaultCompanySkin();
 		skin.setId(pojo.getId().toString());
 		skin.setName(pojo.getName());
-		return null;
+		return skin;
 	}
 
 }

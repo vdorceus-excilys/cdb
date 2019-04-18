@@ -17,11 +17,13 @@ public class ComputerPersistor implements Persistor<Computer> {
 	private static final String 
 					FIND_ALL_QUERY_LAZY="SELECT id, name, introduced, discontinued, company_id FROM computer",
 					FIND_ALL_QUERY="SELECT computer.id, computer.name, introduced, discontinued, company_id,company.name FROM computer join company on computer.company_id=company.id",
+					FIND_ALL_QUERY_LIMIT="SELECT computer.id, computer.name, introduced, discontinued, company_id,company.name FROM computer join company on computer.company_id=company.id LIMIT ?,?",
 					FIND_ONE_QUERY="SELECT computer.id, computer.name, introduced, discontinued, company_id,company.name FROM computer join company on computer.company_id=company.id WHERE computer.id = ? LIMIT 1",
 					FIND_ONE_QUERY_LAZY="SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id = ? LIMIT 1",
 					CREATE_QUERY ="INSERT INTO computer(`id`,`name`,`introduced`,`discontinued`,`company_id`) VALUES(?,?,?,?,?)",
 					DELETE_QUERY="DELETE FROM computer where computer.id = ?",
-					UPDATE_QUERY="UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id  = ? WHERE id = ?"
+					UPDATE_QUERY="UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id  = ? WHERE id = ?",
+					COUNT_QUERY="SELECT COUNT(*)  FROM computer"
 					;
 	
 	private final Database database;
@@ -37,6 +39,24 @@ public class ComputerPersistor implements Persistor<Computer> {
 		try(Connection connection = database.getConnection()){
 			Statement stmt = connection.createStatement();
 			ResultSet rset = (!lazyStrategy) ? stmt.executeQuery(FIND_ALL_QUERY) : stmt.executeQuery(FIND_ALL_QUERY_LAZY);
+			while (rset.next()) {				
+				computers.add(convertResultLine(rset));
+			}			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return computers;
+	}
+	@Override
+	public Set<Computer> findAllQuery(Long offset,Long limit) {
+		Set<Computer> computers = new TreeSet<Computer>();
+		try(Connection connection = database.getConnection()){
+			String sqlQuery = FIND_ALL_QUERY_LIMIT;
+			PreparedStatement stmt = connection.prepareStatement(sqlQuery);
+			stmt.setLong(1, offset);
+			stmt.setLong(2, limit);
+			ResultSet rset = stmt.executeQuery();
 			while (rset.next()) {				
 				computers.add(convertResultLine(rset));
 			}			
@@ -108,6 +128,19 @@ public class ComputerPersistor implements Persistor<Computer> {
 		}		
 		return computer;
 	}
+	@Override
+	public Long countAll() {
+		Long count =0L;
+		try(Connection connection = database.getConnection()){
+			Statement stmt = connection.createStatement();
+			ResultSet rset =  stmt.executeQuery(COUNT_QUERY);
+			count = rset.next()  ? rset.getLong(1) : 0L;						
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return count;
+	}
 
 	@Override 
 	public Computer convertResultLine(ResultSet rset) throws SQLException {
@@ -123,6 +156,8 @@ public class ComputerPersistor implements Persistor<Computer> {
 		computer.setCompany(company);
 		return computer;
 	}
+	
+	
 
 	@Override
 	public void setLazyStrategy(Boolean b) {

@@ -4,8 +4,9 @@ import com.excilys.training.model.Company;
 
 public class CompanyDefaultValidator implements Validator<Company>{
 	
-	public Boolean validate(Company company) {
+	public void validate(Company company) throws FailedValidationException{
 		Boolean valid = (company!=null)	&& (company.getId()>=0)	;
-		return valid;
+		if(!valid)
+			throw new FailedValidationException();
 	}
 }
