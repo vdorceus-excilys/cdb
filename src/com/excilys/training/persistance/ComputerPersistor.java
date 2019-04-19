@@ -16,9 +16,9 @@ public class ComputerPersistor implements Persistor<Computer> {
 	
 	private static final String 
 					FIND_ALL_QUERY_LAZY="SELECT id, name, introduced, discontinued, company_id FROM computer",
-					FIND_ALL_QUERY="SELECT computer.id, computer.name, introduced, discontinued, company_id,company.name FROM computer join company on computer.company_id=company.id",
-					FIND_ALL_QUERY_LIMIT="SELECT computer.id, computer.name, introduced, discontinued, company_id,company.name FROM computer join company on computer.company_id=company.id LIMIT ?,?",
-					FIND_ONE_QUERY="SELECT computer.id, computer.name, introduced, discontinued, company_id,company.name FROM computer join company on computer.company_id=company.id WHERE computer.id = ? LIMIT 1",
+					FIND_ALL_QUERY="SELECT computer.id, computer.name, introduced, discontinued, company_id,company.name FROM computer left outter join company on computer.company_id=company.id",
+					FIND_ALL_QUERY_LIMIT="SELECT computer.id, computer.name, introduced, discontinued, company_id,company.name FROM computer left outter join company on computer.company_id=company.id LIMIT ?,?",
+					FIND_ONE_QUERY="SELECT computer.id, computer.name, introduced, discontinued, company_id,company.name FROM computer left outter join company on computer.company_id=company.id WHERE computer.id = ? LIMIT 1",
 					FIND_ONE_QUERY_LAZY="SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id = ? LIMIT 1",
 					CREATE_QUERY ="INSERT INTO computer(`id`,`name`,`introduced`,`discontinued`,`company_id`) VALUES(?,?,?,?,?)",
 					DELETE_QUERY="DELETE FROM computer where computer.id = ?",
