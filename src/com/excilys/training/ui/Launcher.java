@@ -76,7 +76,7 @@ public class Launcher {
 	
 	static public int howManyPages(Long count) {
 		int nbre  =  (int) (count/Launcher.pagination);
-		//nbre += (count%Launcher.pagination==0) ? 0 : 1;
+		nbre += (count%Launcher.pagination==0) ? 0 : 1;
 		return  nbre;		 
 	}
 	
